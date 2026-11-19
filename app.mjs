@@ -2,6 +2,7 @@ import {weekdays,empty,ranges,today,estimate,schedule} from './schedule.mjs';
 
 const get = id => document.getElementById(id);
 const storage = 'work-planner-v1';
+const cloud = {"url":"https://mfztxmravlidhgfpqypd.supabase.co","key":"sb_publishable_tnBpOfXettagqiu6jFL2SQ_eDRN9UHP"};
 const read = (key,fallback) => JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
 let state = read(storage,empty());
 let backend, session, revision;
@@ -12,6 +13,11 @@ date.value = today();
 const form = get('taskForm');
 const hours = get('hours');
 const setting = get('sync');
+for (const name of ['url','key']) {
+  const field = setting.elements[name];
+  field.disabled = true;
+  field.closest('label').hidden = true;
+}
 const status = message => { get('status').textContent = message; };
 const button = (title, handler) => {
   const element = document.createElement('button');
@@ -88,7 +94,7 @@ function render() {
   options('projects',[...new Set(Object.values(state.contacts||{}).flat())]);
   get('connected').hidden = !session;
   setting.hidden = !!session;
-  get('syncInfo').textContent = 'Changes are saved in this browser. Sign in to the same cloud planner on each device to sync.';
+  get('syncInfo').textContent = 'Sign in with your Work Planner account on each device to see and update the same tasks.';
 }
 function renderHours() {
   weekdays.forEach((_,i)=>{ hours.elements['day'+i].value=state.hours[i]; });
@@ -262,9 +268,7 @@ setting.onsubmit=async event=>{
   busy=true;
   const fields=Object.fromEntries(new FormData(setting));
   try {
-    const url=new URL(fields.url);
-    if (url.protocol!=='https:' || url.username || url.password || url.pathname!=='/' || url.search || url.hash) throw Error('Enter the HTTPS Supabase project URL.');
-    backend={url:url.origin,key:fields.key.trim()};
+    backend=cloud;
     const result=await request('/auth/v1/token?grant_type=password',{method:'POST',body:{email:fields.email,password:fields.password}});
     if (state.tasks.length && !confirm('Connect this device? If a cloud planner exists, it will replace your local copy.')) return;
     remember(result);
