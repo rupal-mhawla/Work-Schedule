@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102a27">
+<title>Work Planner</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="app.mjs"></script>
+</head>
+<body>
+<header><div class="wrap mast"><div><p class="brand">WORK PLANNER</p><h1>Plan your day</h1></div><button id="newTask">+ Add task</button></div></header>
+<main class="wrap">
+<nav aria-label="Planner views"><button data-view="day" aria-pressed="true">Schedule</button><button data-view="tasks" aria-pressed="false">Tasks</button><button data-view="settings" aria-pressed="false">Settings</button></nav>
+<p id="status" role="status"></p>
+<section id="day"><div class="toolbar"><div><h2>Daily schedule</h2><p id="dayInfo"></p></div><label>Schedule date<input type="date" id="date"></label></div><div id="timeline"></div><h2>Doesn’t fit</h2><div id="overflow"></div></section>
+<section id="tasks" hidden><h2>Tasks and appointments</h2><div id="list"></div></section>
+<section id="settings" hidden>
+<h2>Availability</h2><form id="hours"><p>Enter time ranges in 24-hour format, separated by commas. Use 24:00 for midnight. Leave unavailable days blank.</p><div id="week"></div><label>Buffer per work window (minutes)<input name="buffer" type="number" min="0" max="120" required></label><button>Save availability</button></form>
+<h2>Planner data</h2><div class="actions"><button id="export" class="secondary">Export backup</button><label>Import planner file<input id="import" type="file" accept=".json,application/json"></label></div>
+<h2>Device sync</h2><form id="sync"><p id="syncInfo"></p><label>Supabase project URL<input name="url" type="url" required></label><label>Publishable or anon key<input name="key" required></label><label>Email<input name="email" type="email" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button>Sign in and sync</button></form><div id="connected" hidden><button id="refresh" class="secondary">Refresh from cloud</button> <button id="disconnect" class="secondary">Sign out</button></div>
+</section>
+</main>
+<dialog id="editor"><form id="taskForm"><div class="toolbar"><h2 id="editorTitle">Add task</h2><button type="button" id="close" class="secondary" aria-label="Close">Close</button></div>
+<label>Task title<input name="title" maxlength="200" required></label>
+<label>Instructions or notes<textarea name="notes" rows="3"></textarea></label>
+<div class="grid"><label>Requested by<input name="contact" list="contacts"></label><label>Company or project<input name="project" list="projects"></label>
+<label>Priority<select name="priority"><option value="normal">Normal</option><option value="urgent">Urgent</option></select></label>
+<label>Duration in minutes<input name="minutes" type="number" min="1" max="1440" placeholder="Estimated if blank"></label>
+<label>Available from<input name="startDate" type="date"></label><label>Deadline (Eastern)<input name="due" type="datetime-local"></label>
+<label>Earliest start time (Eastern)<input name="notBefore" type="time"></label><label>Repeat<select name="repeat"><option value="once">Once</option><option value="daily">Daily</option></select></label>
+<label>Scheduling window<select name="window"><option value="any">Any available hours</option><option value="first">First available window</option><option value="morning">Finish before noon</option></select></label></div>
+<fieldset><legend>Fixed appointment</legend><div class="grid"><label>Start (Eastern)<input name="fixedStart" type="datetime-local"></label><label>End (Eastern)<input name="fixedEnd" type="datetime-local"></label></div></fieldset>
+<p id="formError" role="alert"></p><div class="actions"><button id="saveTask">Save task</button><button type="button" id="deleteTask" class="secondary" hidden>Delete</button></div></form></dialog>
+<datalist id="contacts"></datalist><datalist id="projects"></datalist>
+</body></html>
+
+
+
