@@ -1,4 +1,4 @@
-import {weekdays,empty,ranges,today,estimate,schedule} from './schedule.mjs';
+import {weekdays,empty,ranges,today,estimate,schedule} from './schedule.mjs?v=2';
 
 const get = id => document.getElementById(id);
 const storage = 'work-planner-v1';
@@ -282,13 +282,17 @@ setting.onsubmit=async event=>{
     status(error.message);
   } finally { busy=false; }
 };
-get('refresh').onclick=async ()=>{
-  if (busy) return;
+async function refreshCloud() {
+  if (busy || !session) return;
   busy=true;
   try { await pull(); status('Cloud planner refreshed.'); }
   catch(error) { status(error.message); }
   finally { busy=false; }
-};
+}
+get('refresh').onclick=refreshCloud;
+document.addEventListener('visibilitychange',()=>{
+  if (!document.hidden && !get('editor').open) void refreshCloud();
+});
 get('disconnect').onclick=async ()=>{
   if (busy) return;
   busy=true;
