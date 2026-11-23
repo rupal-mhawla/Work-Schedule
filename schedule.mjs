@@ -29,7 +29,7 @@ function subtract(slots, start, end) {
 }
 export function schedule(state,date) {
   const day = new Date(date+'T00:00:00Z').getUTCDay();
-  const windows = ranges(state.hours[day]);
+  const windows = ranges(state.dateHours?.[date] ?? state.hours[day]);
   let slots = windows.slice();
   const rows = [], overflow = [], completed = [];
   const fixed = state.tasks.filter(t=>t.fixedStart && t.fixedStart.slice(0,10) <= date && t.fixedEnd.slice(0,10) >= date);
